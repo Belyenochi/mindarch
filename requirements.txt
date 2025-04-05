@@ -1,0 +1,8 @@
+loguru~=0.7.3
+pymongo~=4.11.3
+motor~=3.7.0
+beanie~=1.29.0
+fastapi~=0.115.12
+pydantic~=2.11.2
+starlette~=0.46.1
+uvicorn~=0.34.0

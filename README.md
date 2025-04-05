@@ -53,11 +53,9 @@ mindarch/
 │   ├── extraction/            # 知识提取
 │   │   ├── unit_extractor.py  # 知识单元提取器
 │   │   ├── relation_extractor.py # 关系提取器
-│   │   └── entity_resolver.py # 实体消歧器
 │   ├── prompts/               # 提示模板
 │   │   ├── unit_prompts.py    # 知识单元提取提示
 │   │   ├── relation_prompts.py# 关系提取提示
-│   │   └── resolution_prompts.py # 实体消歧提示
 │   └── evaluation/            # AI结果评估
 │       ├── confidence.py      # 置信度评估
 │       └── quality.py         # 质量评估
@@ -114,8 +112,8 @@ API层处理HTTP请求和响应，将客户端请求路由到相应的业务服�
 
 AI服务处理智能知识提取和关系构建。
 
-- **client.py**: DeepSeek-R1 API调用封装
-- **extraction/**: 知识提取逻辑，包括单元提取、关系提取和实体消歧
+- **client.py**: OpenAI(DeepSeek-R1) API调用封装
+- **extraction/**: 知识提取逻辑，包括单元提取、关系提取
 - **prompts/**: 提示工程模板，用于指导AI生成结构化输出
 - **evaluation/**: AI生成内容的质量评估和置信度计算
 
