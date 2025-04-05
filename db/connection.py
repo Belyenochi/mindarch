@@ -29,7 +29,6 @@ async def connect_db():
                 KnowledgeUnit,
                 SemanticTriple,
                 KnowledgeGraph,
-                FileImport
             ]
         )
 

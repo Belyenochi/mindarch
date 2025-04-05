@@ -1,24 +1,23 @@
-# mindarch/main.py
-import uvicorn
-import os
+# main.py
+import logging
 from fastapi import FastAPI
-from loguru import logger
 from api.app import create_app
-from core.config import settings
-from db.connection import connect_db, close_db
+
+# 配置日志
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+app = create_app()
 
 
 def serve():
-    """启动服务器"""
-    app = create_app()
-    logger.info(f"启动 MindArch 服务，监听地址: {settings.HOST}:{settings.PORT}")
-    uvicorn.run(
-        app,
-        host=settings.HOST,
-        port=settings.PORT,
-        reload=settings.DEBUG,
-        workers=settings.WORKERS
-    )
+    import uvicorn
+    try:
+        logger.info("启动 MindArch 服务，监听地址: 0.0.0.0:8000")
+        uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+    except Exception as e:
+        logger.error(f"服务启动失败: {str(e)}")
+        raise
 
 
 if __name__ == "__main__":

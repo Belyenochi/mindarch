@@ -33,7 +33,7 @@ class ImportManager:
         self.triple_service = SemanticTripleService()
         self.graph_service = KnowledgeGraphService()
 
-        # 进行中的导入任务
+        # 进行中的导入任务（内存存储，无需持久化）
         self.active_imports = {}
 
     async def import_file(self, file_name: str, content: bytes, file_type: str,
@@ -65,6 +65,7 @@ class ImportManager:
             "file_hash": file_hash,
             "owner_id": owner_id,
             "status": "pending",
+            "status_description": "等待处理",
             "created_at": datetime.now(),
             "updated_at": datetime.now(),
             "options": options or {},
@@ -78,19 +79,13 @@ class ImportManager:
 
     async def get_import_status(self, import_id: str) -> Optional[Dict[str, Any]]:
         """获取导入状态"""
-        if import_id in self.active_imports:
-            return self.active_imports[import_id]
-
-        # 查找历史导入
-        import_record = await self._find_import_record(import_id)
-        return import_record
+        # 仅从内存中查找，不需要持久化存储
+        return self.active_imports.get(import_id)
 
     async def get_import_history(self, query: Dict[str, Any], limit: int = 20,
                                  skip: int = 0) -> List[Dict[str, Any]]:
         """获取导入历史"""
-        # 在这里实现导入历史查询
-        # 可以是临时的内存存储或简单的文件存储
-        # 在MVP阶段可以简化为仅返回活动导入
+        # 从内存中筛选符合条件的导入任务
         active = [imp for imp in self.active_imports.values()
                   if all(imp.get(k) == v for k, v in query.items())]
 
@@ -100,7 +95,7 @@ class ImportManager:
 
     async def count_imports(self, query: Dict[str, Any]) -> int:
         """计数导入记录"""
-        # 简化实现
+        # 仅计算内存中的记录数量
         active_count = len([imp for imp in self.active_imports.values()
                             if all(imp.get(k) == v for k, v in query.items())])
         return active_count
@@ -116,8 +111,7 @@ class ImportManager:
             return {"status": "error", "message": "无法取消已完成的任务"}
 
         # 更新状态
-        import_task["status"] = "cancelled"
-        import_task["updated_at"] = datetime.now()
+        self._update_import_status(import_id, "cancelled", 100)
 
         return {"status": "success"}
 
@@ -201,28 +195,53 @@ class ImportManager:
         """更新导入任务状态"""
         if import_id in self.active_imports:
             import_task = self.active_imports[import_id]
+
+            # 使用更加可读的状态描述
+            status_descriptions = {
+                "pending": "等待处理",
+                "processing": "处理中",
+                "completed": "处理完成",
+                "failed": "处理失败",
+                "cancelled": "已取消"
+            }
+
+            # 设置状态和进度
             import_task["status"] = status
+            import_task["status_description"] = status_descriptions.get(status, status)
             import_task["progress"] = progress
             import_task["updated_at"] = datetime.now()
 
+            # 添加阶段描述
+            if status == "processing":
+                phase_descriptions = {
+                    5: "初始化导入流程",
+                    20: "解析文件结构",
+                    40: "提取知识单元",
+                    60: "保存知识单元",
+                    75: "提取实体关系",
+                    85: "保存实体关系",
+                    95: "构建知识图谱"
+                }
+                import_task["current_phase"] = phase_descriptions.get(progress, "处理中")
+            elif status == "completed":
+                import_task["current_phase"] = "完成"
+            elif status == "failed":
+                import_task["current_phase"] = "失败"
+            elif status == "cancelled":
+                import_task["current_phase"] = "已取消"
+
+            # 添加其他数据
             if additional_data:
                 import_task.update(additional_data)
 
     async def _check_duplicate(self, file_hash: str, owner_id: str) -> Optional[str]:
         """检查是否存在相同文件"""
-        # 在活动导入中查找
+        # 仅在内存中的活动导入中查找
         for import_id, task in self.active_imports.items():
             if task["file_hash"] == file_hash and task["owner_id"] == owner_id:
                 return import_id
 
-        # 在历史导入中查找
-        # 简化MVP实现，仅检查活动导入
         return None
-
-    async def _find_import_record(self, import_id: str) -> Optional[Dict[str, Any]]:
-        """查找导入记录"""
-        # 简化MVP实现，仅查找活动导入
-        return self.active_imports.get(import_id)
 
     async def _save_units(self, units: List[Dict[str, Any]], import_id: str,
                           file_name: str) -> List[str]:

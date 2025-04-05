@@ -16,7 +16,7 @@ class KnowledgeGraphCreate(BaseModel):
     visual_settings: Optional[Dict[str, Any]] = None
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "name": "计算机科学基础概念",
                 "description": "计算机科学领域的核心概念和它们之间的关系",
@@ -44,7 +44,7 @@ class KnowledgeGraphUpdate(BaseModel):
     visual_settings: Optional[Dict[str, Any]] = None
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "name": "计算机科学核心概念",
                 "description": "更新后的描述",

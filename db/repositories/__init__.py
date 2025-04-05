@@ -7,7 +7,6 @@ from core.config import settings
 from core.models.knowledge_unit import KnowledgeUnit
 from core.models.semantic_triple import SemanticTriple
 from core.models.knowledge_graph import KnowledgeGraph
-from core.models.file_import import FileImport
 
 # 全局客户端和数据库对象
 client = None

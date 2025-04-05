@@ -49,7 +49,7 @@ class KnowledgeUnitCreate(BaseModel):
     knowledge: Optional[Knowledge] = None
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "title": "二叉树",
                 "content": "二叉树是每个节点最多有两个子树的树结构",
@@ -77,7 +77,7 @@ class KnowledgeUnitUpdate(BaseModel):
     knowledge: Optional[Knowledge] = None
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "title": "二叉树数据结构",
                 "content": "二叉树是每个节点最多有两个子树的树结构，常用于实现二叉搜索树和堆",
@@ -93,7 +93,7 @@ class KnowledgeUnitSearch(BaseModel):
     skip: int = 0
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "query": "二叉树",
                 "filters": {"unit_type": "concept", "knowledge.domain": "计算机科学"},

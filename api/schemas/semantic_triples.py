@@ -16,7 +16,7 @@ class SemanticTripleCreate(BaseModel):
     source_id: Optional[str] = None
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "subject_id": "6123456789abcdef01234567",
                 "predicate": "是一种",
@@ -37,7 +37,7 @@ class SemanticTripleUpdate(BaseModel):
     context: Optional[str] = None
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "predicate": "属于",
                 "relation_type": "belongs-to",
@@ -52,7 +52,7 @@ class PathRequest(BaseModel):
     max_depth: int = 3
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "start_id": "6123456789abcdef01234567",
                 "end_id": "6123456789abcdef01234569",
